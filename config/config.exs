@@ -23,16 +23,22 @@ config :logger, :console,
   metadata: [:request_id]
 
 # Guardian config
-
 config :guardian, Guardian,
-  allowed_algos: ["HS512"], # optional
-  verify_module: Guardian.JWT,  # optional
-  issuer: "Api",
-  ttl: { 30, :days },
-  allowed_drift: 2000,
-  verify_issuer: true, # optional
-  secret_key: "UZ2IbrDisIedds3yW6wGN2v8XTkeZ6yXyywWP+4ajPJK4ugejf8Xa3MsZYJddzkj", # Insert previously generated secret key!
-  serializer: Api.GuardianSerializer
+ hooks: GuardianDb,
+ allowed_algos: ["HS512"],
+ verify_module: Guardian.JWT,
+ issuer: "Api",
+ ttl: { 7, :days },
+ verify_issuer: true,
+ secret_key: %{
+   "k" => "3NmPoChAVHDduHkJ4d9xZk8eJTjxAYjZBvbA4VuAj1YTNFCj8JCt4vbvZReWcqkj",
+   "kty" => "oct"
+ },
+ serializer: Api.GuardianSerializer
+
+config :guardian_db, GuardianDb,
+ repo: Api.Repo,
+ sweep_interval: 1440 # 24hx60min=1440 minutes (once a day)
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
